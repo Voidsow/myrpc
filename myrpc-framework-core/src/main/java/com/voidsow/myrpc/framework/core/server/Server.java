@@ -2,7 +2,13 @@ package com.voidsow.myrpc.framework.core.server;
 
 import com.voidsow.myrpc.framework.core.common.Decoder;
 import com.voidsow.myrpc.framework.core.common.Encoder;
+import com.voidsow.myrpc.framework.core.common.Utils;
+import com.voidsow.myrpc.framework.core.common.config.ConfigLoader;
+import com.voidsow.myrpc.framework.core.common.config.ServerConfig;
 import com.voidsow.myrpc.framework.core.example.EchoServiceImpl;
+import com.voidsow.myrpc.framework.core.registry.RegistryService;
+import com.voidsow.myrpc.framework.core.registry.URL;
+import com.voidsow.myrpc.framework.core.registry.zookeeper.ZookeeperRegister;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -11,12 +17,16 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 import static com.voidsow.myrpc.framework.core.common.cache.ServerCache.PROVIDER_CLASS;
+import static com.voidsow.myrpc.framework.core.common.cache.ServerCache.PROVIDER_URLS;
 
 public class Server {
     ServerConfig config;
 
-    public Server(ServerConfig config) {
-        this.config = config;
+    RegistryService registryService;
+
+    public Server(String configLocation) throws Exception {
+        this.config = ConfigLoader.getServerConfig(configLocation);
+        registryService = new ZookeeperRegister(config.getRegistryAddr());
     }
 
     public void start() throws InterruptedException {
@@ -25,18 +35,25 @@ public class Server {
         ServerBootstrap bootstrap = new ServerBootstrap()
                 .group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
-                .option(ChannelOption.SO_BACKLOG, 1024)
                 .childOption(ChannelOption.TCP_NODELAY, true)
+                .option(ChannelOption.SO_BACKLOG, 1024)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast(new Decoder())
+                        socketChannel.pipeline()
+                                .addLast(new Decoder())
                                 .addLast(new Encoder())
                                 .addLast(new ServerHandler());
                     }
                 });
+        exposeService();
         bootstrap.bind(config.getPort()).sync();
+    }
+
+    public void exposeService() {
+        for (URL url : PROVIDER_URLS)
+            registryService.register(url);
     }
 
     public void registerService(Object service) {
@@ -47,14 +64,21 @@ public class Server {
         else if (interfaces.length > 1)
             throw new RuntimeException("service must be function single interface.");
         Class<?> serviceClazz = interfaces[0];
-        //注册服务
+
         PROVIDER_CLASS.put(serviceClazz.getName(), service);
+        URL url = new URL();
+        url.setService(serviceClazz.getName());
+        url.setApplication(config.getApplication());
+        url.addParameter("host", Utils.getIpAddress());
+        url.addParameter("port", String.valueOf(config.getPort()));
+        PROVIDER_URLS.add(url);
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        ServerConfig config = new ServerConfig();
-        config.setPort(1603);
-        Server server = new Server(config);
+    /**
+     * @param args 输入一个参数，表示配置文件的位置
+     */
+    public static void main(String[] args) throws Exception {
+        Server server = new Server(args.length > 0 ? args[0] : null);
         server.registerService(new EchoServiceImpl());
         server.start();
     }
