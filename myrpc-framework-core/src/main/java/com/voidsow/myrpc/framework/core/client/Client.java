@@ -11,6 +11,8 @@ import com.voidsow.myrpc.framework.core.proxy.jdk.JDKProxyFactory;
 import com.voidsow.myrpc.framework.core.registry.AbstractRegister;
 import com.voidsow.myrpc.framework.core.registry.URL;
 import com.voidsow.myrpc.framework.core.registry.zookeeper.ZookeeperRegister;
+import com.voidsow.myrpc.framework.core.rooter.RandomRoterImpl;
+import com.voidsow.myrpc.framework.core.rooter.RotateRouterImpl;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -27,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import static com.voidsow.myrpc.framework.core.common.cache.ClientCache.SUBSCRIBE_SERVICES;
-import static com.voidsow.myrpc.framework.core.common.cache.ClientCache.TASK_QUEUE;
+import static com.voidsow.myrpc.framework.core.common.Constant.ROUTER_TYPE_RANDOM;
+import static com.voidsow.myrpc.framework.core.common.cache.ClientCache.*;
 
 public class Client {
     Logger logger = LoggerFactory.getLogger(Client.class);
@@ -46,6 +48,7 @@ public class Client {
     Client(String configLocation) throws Exception {
         config = ConfigLoader.getClientConfig(configLocation);
         abstractRegister = new ZookeeperRegister(config.getRegistryAddr());
+        ROUTER = config.getRouterStrategy().equals(ROUTER_TYPE_RANDOM) ? new RandomRoterImpl() : new RotateRouterImpl();
     }
 
     public Bootstrap getBootstrap() {
@@ -140,12 +143,14 @@ public class Client {
         int index;
         int sum;
         int count;
+
         public Pair(int index, int sum) {
             this.index = index;
             this.sum = sum;
             count = 1;
         }
     }
+
     int solution(int[] nums) {
         int sum = 0;
         HashMap<Integer, Pair> map = new HashMap<>();

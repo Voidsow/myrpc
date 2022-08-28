@@ -7,6 +7,17 @@ public class ClientConfig {
 
     String proxy;
 
+    String routerStrategy;
+
+    public String getRouterStrategy() {
+        return routerStrategy;
+    }
+
+    public ClientConfig setRouterStrategy(String routerStrategy) {
+        this.routerStrategy = routerStrategy;
+        return this;
+    }
+
     public String getApplication() {
         return application;
     }

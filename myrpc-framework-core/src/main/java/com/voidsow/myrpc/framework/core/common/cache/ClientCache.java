@@ -3,6 +3,8 @@ package com.voidsow.myrpc.framework.core.common.cache;
 import com.voidsow.myrpc.framework.core.common.Invocation;
 import com.voidsow.myrpc.framework.core.common.event.data.ChannelFutureWrapper;
 import com.voidsow.myrpc.framework.core.registry.URL;
+import com.voidsow.myrpc.framework.core.rooter.ChannelFutureRoller;
+import com.voidsow.myrpc.framework.core.rooter.Router;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -36,4 +38,13 @@ public class ClientCache {
      * 实际调用时的服务提供者对应的channel
      */
     static public Map<String, List<ChannelFutureWrapper>> PROVIDERS = new ConcurrentHashMap<>();
+
+    /**
+     * 随机路由数组
+     */
+    static public Map<String, ChannelFutureWrapper[]> SERVICE_ROUTER = new ConcurrentHashMap<>();
+
+    static public ChannelFutureRoller SERVICE_CHANNEL_ROLLER = new ChannelFutureRoller();
+
+    static public Router ROUTER;
 }

@@ -5,6 +5,26 @@ public class ProviderNode {
 
     String address;
 
+    Integer weight;
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
+    public String getRegisterTime() {
+        return registerTime;
+    }
+
+    public void setRegisterTime(String registerTime) {
+        this.registerTime = registerTime;
+    }
+
+    String registerTime;
+
     public String getService() {
         return service;
     }

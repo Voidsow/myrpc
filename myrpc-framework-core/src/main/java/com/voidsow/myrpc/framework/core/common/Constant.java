@@ -5,4 +5,8 @@ public class Constant {
     public static short MAGIC_NUMBER = 1603;
 
     public static long TIME_OUT_MILLIS = 3 * 1000;
+
+    public static String ROUTER_TYPE_RANDOM = "random";
+
+    public static String ROUTER_TYPE_ROTATE = "rotate";
 }

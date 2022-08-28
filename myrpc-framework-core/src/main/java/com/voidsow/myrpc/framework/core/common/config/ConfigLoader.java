@@ -12,7 +12,7 @@ public class ConfigLoader {
     public static final String REGISTER_ADDRESS = "myrpc.registry.address";
     public static final String APPLICATION_NAME = "myrpc.application";
     public static final String PROXY_TYPE = "myrpc.proxy";
-    public static final String ROUTER_TYPE = "myrpc.router";
+    public static final String ROUTER_TYPE = "myrpc.router.strategy";
 
 
     public static Properties loadConfiguration(String location) throws IOException {
@@ -37,6 +37,7 @@ public class ConfigLoader {
         ClientConfig config = new ClientConfig();
         return config.setApplication(properties.getProperty(APPLICATION_NAME))
                 .setProxy(properties.getProperty(PROXY_TYPE))
-                .setRegistryAddr(properties.getProperty(REGISTER_ADDRESS));
+                .setRegistryAddr(properties.getProperty(REGISTER_ADDRESS))
+                .setRouterStrategy(properties.getProperty(ROUTER_TYPE));
     }
 }
