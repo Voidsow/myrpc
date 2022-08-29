@@ -6,6 +6,7 @@ import com.voidsow.myrpc.framework.core.registry.URL;
 import com.voidsow.myrpc.framework.core.rooter.ChannelFutureRoller;
 import com.voidsow.myrpc.framework.core.rooter.Router;
 import com.voidsow.myrpc.framework.core.serialize.SerializeFactory;
+import com.voidsow.myrpc.framework.core.spi.ServiceLoader;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -56,4 +57,9 @@ public class ClientCache {
      * 序列化工具类
      */
     static public SerializeFactory SERIALIZE_FACTORY;
+
+    /**
+     * SPI
+     */
+    static public ServiceLoader SPI = new ServiceLoader();
 }

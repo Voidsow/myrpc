@@ -9,12 +9,8 @@ import com.voidsow.myrpc.framework.core.proxy.jdk.JDKProxyFactory;
 import com.voidsow.myrpc.framework.core.registry.AbstractRegister;
 import com.voidsow.myrpc.framework.core.registry.URL;
 import com.voidsow.myrpc.framework.core.registry.zookeeper.ZookeeperRegister;
-import com.voidsow.myrpc.framework.core.rooter.RandomRoterImpl;
-import com.voidsow.myrpc.framework.core.rooter.RotateRouterImpl;
-import com.voidsow.myrpc.framework.core.serialize.HessianSerializeFactory;
-import com.voidsow.myrpc.framework.core.serialize.JdkSerializeFactory;
-import com.voidsow.myrpc.framework.core.serialize.JsonSerializeFactory;
-import com.voidsow.myrpc.framework.core.serialize.KryoSerializeFactory;
+import com.voidsow.myrpc.framework.core.rooter.Router;
+import com.voidsow.myrpc.framework.core.serialize.SerializeFactory;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
@@ -23,14 +19,14 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import org.jboss.netty.buffer.DirectChannelBufferFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Scanner;
 
-import static com.voidsow.myrpc.framework.core.common.Constant.*;
 import static com.voidsow.myrpc.framework.core.common.cache.ClientCache.*;
 
 public class Client {
@@ -50,24 +46,12 @@ public class Client {
         initConfig();
     }
 
-    void initConfig() {
-        ROUTER = config.getRouterStrategy().equals(ROUTER_TYPE_RANDOM) ? new RandomRoterImpl() : new RotateRouterImpl();
-        switch (config.getSerializer()) {
-            case SERIALIZE_TYPE_JDK:
-                SERIALIZE_FACTORY = new JdkSerializeFactory();
-                break;
-            case SERIALIZE_TYPE_HESSIAN:
-                SERIALIZE_FACTORY = new HessianSerializeFactory();
-                break;
-            case SERIALIZE_TYPE_KRYO:
-                SERIALIZE_FACTORY = new KryoSerializeFactory();
-                break;
-            case SERIALIZE_TYPE_JSON:
-                SERIALIZE_FACTORY = new JsonSerializeFactory();
-                break;
-            default:
-                throw new RuntimeException(String.format("no match serializer for %s", config.getSerializer()));
-        }
+    void initConfig() throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Class<?> routerImplClazz = SPI.getService(Router.class, config.getRouterStrategy());
+        ROUTER = (Router) routerImplClazz.getConstructor().newInstance();
+        logger.info("environment:router strategy={}", config.getSerializer());
+        Class<?> serializerImplClazz = SPI.getService(SerializeFactory.class, config.getSerializer());
+        SERIALIZE_FACTORY = (SerializeFactory) serializerImplClazz.getConstructor().newInstance();
         logger.info("environment:serializer={}", config.getSerializer());
     }
 

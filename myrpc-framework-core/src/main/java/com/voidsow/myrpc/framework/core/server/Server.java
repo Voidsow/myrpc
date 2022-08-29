@@ -9,7 +9,7 @@ import com.voidsow.myrpc.framework.core.example.EchoServiceImpl;
 import com.voidsow.myrpc.framework.core.registry.RegistryService;
 import com.voidsow.myrpc.framework.core.registry.URL;
 import com.voidsow.myrpc.framework.core.registry.zookeeper.ZookeeperRegister;
-import com.voidsow.myrpc.framework.core.serialize.*;
+import com.voidsow.myrpc.framework.core.serialize.SerializeFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -19,7 +19,9 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.voidsow.myrpc.framework.core.common.Constant.*;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+
 import static com.voidsow.myrpc.framework.core.common.cache.ServerCache.*;
 
 public class Server {
@@ -35,24 +37,10 @@ public class Server {
         initConfig();
     }
 
-    void initConfig() {
-        switch (config.getSerializer()) {
-            case SERIALIZE_TYPE_JDK:
-                SERIALIZE_FACTORY = new JdkSerializeFactory();
-                break;
-            case SERIALIZE_TYPE_HESSIAN:
-                SERIALIZE_FACTORY = new HessianSerializeFactory();
-                break;
-            case SERIALIZE_TYPE_KRYO:
-                SERIALIZE_FACTORY = new KryoSerializeFactory();
-                break;
-            case SERIALIZE_TYPE_JSON:
-                SERIALIZE_FACTORY = new JsonSerializeFactory();
-                break;
-            default:
-                throw new RuntimeException(String.format("no match serializer for %s", config.getSerializer()));
-        }
-        logger.info("init server config:serializer={}", config.getSerializer());
+    void initConfig() throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Class<?> serializerImplClazz = SPI.getService(SerializeFactory.class, config.getSerializer());
+        SERIALIZE_FACTORY = (SerializeFactory) serializerImplClazz.getConstructor().newInstance();
+        logger.info("environment:serializer={}", config.getSerializer());
     }
 
     public void start() throws InterruptedException {

@@ -1,0 +1,4 @@
+jdk=com.voidsow.myrpc.framework.core.serialize.JdkSerializeFactory
+hessian=com.voidsow.myrpc.framework.core.serialize.HessianSerializeFactory
+kryo=com.voidsow.myrpc.framework.core.serialize.KryoSerializeFactory
+json=com.voidsow.myrpc.framework.core.serialize.JsonSerializeFactory

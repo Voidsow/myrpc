@@ -2,14 +2,9 @@ package com.voidsow.myrpc.framework.core.common.cache;
 
 import com.voidsow.myrpc.framework.core.registry.URL;
 import com.voidsow.myrpc.framework.core.serialize.SerializeFactory;
-import io.netty.util.internal.ConcurrentSet;
+import com.voidsow.myrpc.framework.core.spi.ServiceLoader;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.*;
 
 public class ServerCache {
     /**
@@ -25,4 +20,9 @@ public class ServerCache {
      * 序列化工具类
      */
     static public SerializeFactory SERIALIZE_FACTORY;
+
+    /**
+     * SPI
+     */
+    static public ServiceLoader SPI = new ServiceLoader();
 }
