@@ -13,6 +13,8 @@ import static com.voidsow.myrpc.framework.core.common.cache.ClientCache.TASK_QUE
 public class JDKClientInvocationHandler implements InvocationHandler {
     Class<?> serviceClazz;
 
+    static final private Invocation EMPTY = new Invocation();
+
     public JDKClientInvocationHandler(Class<?> serviceClazz) {
         this.serviceClazz = serviceClazz;
     }
@@ -25,12 +27,13 @@ public class JDKClientInvocationHandler implements InvocationHandler {
         invocation.setService(serviceClazz.getName());
         String id = UUID.randomUUID().toString();
         invocation.setId(id);
-        RESP.put(id, invocation);
+        RESP.put(id, EMPTY);
         TASK_QUEUE.add(invocation);
         long startTime = System.currentTimeMillis();
+        //空转轮循
         while (System.currentTimeMillis() - startTime < TIME_OUT_MILLIS) {
             Invocation resp = RESP.get(id);
-            if (resp.getResponse() != null) {
+            if (resp != EMPTY) {
                 return resp.getResponse();
             }
         }

@@ -4,6 +4,16 @@ public class ServerConfig {
     String application;
     int port;
     String registryAddr;
+    String serializer;
+
+    public String getSerializer() {
+        return serializer;
+    }
+
+    public ServerConfig setSerializer(String serializer) {
+        this.serializer = serializer;
+        return this;
+    }
 
     public String getRegistryAddr() {
         return registryAddr;

@@ -9,17 +9,22 @@ import com.voidsow.myrpc.framework.core.example.EchoServiceImpl;
 import com.voidsow.myrpc.framework.core.registry.RegistryService;
 import com.voidsow.myrpc.framework.core.registry.URL;
 import com.voidsow.myrpc.framework.core.registry.zookeeper.ZookeeperRegister;
+import com.voidsow.myrpc.framework.core.serialize.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static com.voidsow.myrpc.framework.core.common.cache.ServerCache.PROVIDER_CLASS;
-import static com.voidsow.myrpc.framework.core.common.cache.ServerCache.PROVIDER_URLS;
+import static com.voidsow.myrpc.framework.core.common.Constant.*;
+import static com.voidsow.myrpc.framework.core.common.cache.ServerCache.*;
 
 public class Server {
+    Logger logger = LoggerFactory.getLogger(Server.class);
+
     ServerConfig config;
 
     RegistryService registryService;
@@ -27,6 +32,27 @@ public class Server {
     public Server(String configLocation) throws Exception {
         this.config = ConfigLoader.getServerConfig(configLocation);
         registryService = new ZookeeperRegister(config.getRegistryAddr());
+        initConfig();
+    }
+
+    void initConfig() {
+        switch (config.getSerializer()) {
+            case SERIALIZE_TYPE_JDK:
+                SERIALIZE_FACTORY = new JdkSerializeFactory();
+                break;
+            case SERIALIZE_TYPE_HESSIAN:
+                SERIALIZE_FACTORY = new HessianSerializeFactory();
+                break;
+            case SERIALIZE_TYPE_KRYO:
+                SERIALIZE_FACTORY = new KryoSerializeFactory();
+                break;
+            case SERIALIZE_TYPE_JSON:
+                SERIALIZE_FACTORY = new JsonSerializeFactory();
+                break;
+            default:
+                throw new RuntimeException(String.format("no match serializer for %s", config.getSerializer()));
+        }
+        logger.info("init server config:serializer={}", config.getSerializer());
     }
 
     public void start() throws InterruptedException {

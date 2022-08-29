@@ -9,4 +9,12 @@ public class Constant {
     public static String ROUTER_TYPE_RANDOM = "random";
 
     public static String ROUTER_TYPE_ROTATE = "rotate";
+
+    public static final String SERIALIZE_TYPE_JDK = "jdk";
+
+    public static final String SERIALIZE_TYPE_HESSIAN = "hessian";
+
+    public static final String SERIALIZE_TYPE_KRYO = "kryo";
+
+    public static final String SERIALIZE_TYPE_JSON = "json";
 }

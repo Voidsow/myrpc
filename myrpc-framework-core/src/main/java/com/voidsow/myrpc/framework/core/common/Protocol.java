@@ -3,7 +3,7 @@ package com.voidsow.myrpc.framework.core.common;
 import static com.voidsow.myrpc.framework.core.common.Constant.MAGIC_NUMBER;
 
 public class Protocol {
-    static final long version = 3439482309482390L;
+    static final long serialVersionUID = 3439482309482390L;
     short magicNumber = MAGIC_NUMBER;
     int length;
     byte[] content;

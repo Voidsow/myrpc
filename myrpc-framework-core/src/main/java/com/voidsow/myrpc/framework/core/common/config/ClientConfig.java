@@ -9,6 +9,17 @@ public class ClientConfig {
 
     String routerStrategy;
 
+    String serializer;
+
+    public String getSerializer() {
+        return serializer;
+    }
+
+    public ClientConfig setSerializer(String serializer) {
+        this.serializer = serializer;
+        return this;
+    }
+
     public String getRouterStrategy() {
         return routerStrategy;
     }

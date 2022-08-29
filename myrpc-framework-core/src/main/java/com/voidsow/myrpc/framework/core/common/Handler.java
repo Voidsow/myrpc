@@ -8,8 +8,10 @@ import io.netty.util.ReferenceCountUtil;
 
 import static com.voidsow.myrpc.framework.core.common.cache.ClientCache.RESP;
 
+/**
+ * 通用的netty handler，唯一功能是发生错误时关闭channel
+ */
 public class Handler extends ChannelInboundHandlerAdapter {
-    protected ObjectMapper mapper = Utils.getMapper();
 
     //遇到错误时关闭channel
     @Override

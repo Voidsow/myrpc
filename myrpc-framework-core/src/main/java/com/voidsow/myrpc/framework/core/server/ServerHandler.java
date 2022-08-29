@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 
 import static com.voidsow.myrpc.framework.core.common.cache.ServerCache.PROVIDER_CLASS;
+import static com.voidsow.myrpc.framework.core.common.cache.ServerCache.SERIALIZE_FACTORY;
 
 public class ServerHandler extends Handler {
     Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -19,8 +20,8 @@ public class ServerHandler extends Handler {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         Channel channel = ctx.channel();
         Protocol protocol = (Protocol) msg;
-        String json = new String(protocol.getContent());
-        Invocation invocation = mapper.readValue(json, Invocation.class);
+        Invocation invocation = SERIALIZE_FACTORY.deserialize(protocol.getContent(), Invocation.class);
+        logger.debug(String.valueOf(invocation));
         logger.info("处理来自{}的请求{}", channel.remoteAddress(), invocation);
         //获取service对应的provider
         Object service = PROVIDER_CLASS.get(invocation.getService());
@@ -38,7 +39,7 @@ public class ServerHandler extends Handler {
             }
         }
         invocation.setResponse(result);
-        protocol.setContent(mapper.writeValueAsString(invocation).getBytes());
+        protocol.setContent(SERIALIZE_FACTORY.serialize(invocation));
         protocol.setLength(protocol.getContent().length);
         ctx.writeAndFlush(protocol);
     }

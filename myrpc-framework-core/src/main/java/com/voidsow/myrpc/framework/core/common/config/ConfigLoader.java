@@ -13,6 +13,7 @@ public class ConfigLoader {
     public static final String APPLICATION_NAME = "myrpc.application";
     public static final String PROXY_TYPE = "myrpc.proxy";
     public static final String ROUTER_TYPE = "myrpc.router.strategy";
+    public static final String SERIALIZE_TYPE = "myrpc.serialize.type";
 
 
     public static Properties loadConfiguration(String location) throws IOException {
@@ -29,7 +30,8 @@ public class ConfigLoader {
         ServerConfig config = new ServerConfig();
         return config.setApplication(properties.getProperty(APPLICATION_NAME)).
                 setPort(Integer.parseInt(properties.getProperty(SERVER_PORT))).
-                setRegistryAddr(properties.getProperty(REGISTER_ADDRESS));
+                setRegistryAddr(properties.getProperty(REGISTER_ADDRESS))
+                .setSerializer(properties.getProperty(SERIALIZE_TYPE));
     }
 
     public static ClientConfig getClientConfig(String location) throws IOException {
@@ -38,6 +40,7 @@ public class ConfigLoader {
         return config.setApplication(properties.getProperty(APPLICATION_NAME))
                 .setProxy(properties.getProperty(PROXY_TYPE))
                 .setRegistryAddr(properties.getProperty(REGISTER_ADDRESS))
-                .setRouterStrategy(properties.getProperty(ROUTER_TYPE));
+                .setRouterStrategy(properties.getProperty(ROUTER_TYPE))
+                .setSerializer(properties.getProperty(SERIALIZE_TYPE));
     }
 }

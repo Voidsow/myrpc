@@ -5,6 +5,7 @@ import com.voidsow.myrpc.framework.core.common.event.data.ChannelFutureWrapper;
 import com.voidsow.myrpc.framework.core.registry.URL;
 import com.voidsow.myrpc.framework.core.rooter.ChannelFutureRoller;
 import com.voidsow.myrpc.framework.core.rooter.Router;
+import com.voidsow.myrpc.framework.core.serialize.SerializeFactory;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -46,5 +47,13 @@ public class ClientCache {
 
     static public ChannelFutureRoller SERVICE_CHANNEL_ROLLER = new ChannelFutureRoller();
 
+    /**
+     * 请求分发路由
+     */
     static public Router ROUTER;
+
+    /**
+     * 序列化工具类
+     */
+    static public SerializeFactory SERIALIZE_FACTORY;
 }
