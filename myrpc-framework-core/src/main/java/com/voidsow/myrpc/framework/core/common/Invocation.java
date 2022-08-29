@@ -1,6 +1,8 @@
 package com.voidsow.myrpc.framework.core.common;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Invocation {
     private String id;
@@ -19,6 +21,7 @@ public class Invocation {
     }
 
     private Object[] parameters;
+    private Map<String, Object> attachments = new ConcurrentHashMap<>();
     private Object response;
 
     public String getMethod() {
@@ -59,5 +62,13 @@ public class Invocation {
 
     public void setResponse(Object response) {
         this.response = response;
+    }
+
+    public Map<String, Object> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(Map<String, Object> attachments) {
+        this.attachments = attachments;
     }
 }
