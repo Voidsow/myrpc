@@ -5,6 +5,26 @@ public class ServerConfig {
     int port;
     String registryAddr;
     String serializer;
+    int queueSize;
+    int handlerNum;
+
+    public int getHandlerNum() {
+        return handlerNum;
+    }
+
+    public ServerConfig setHandlerNum(int handlerNum) {
+        this.handlerNum = handlerNum;
+        return this;
+    }
+
+    public int getQueueSize() {
+        return queueSize;
+    }
+
+    public ServerConfig setQueueSize(int queueSize) {
+        this.queueSize = queueSize;
+        return this;
+    }
 
     public String getSerializer() {
         return serializer;

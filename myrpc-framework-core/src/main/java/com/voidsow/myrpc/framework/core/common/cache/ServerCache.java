@@ -1,5 +1,6 @@
 package com.voidsow.myrpc.framework.core.common.cache;
 
+import com.voidsow.myrpc.framework.core.dispatcher.RequestDispatcher;
 import com.voidsow.myrpc.framework.core.registry.URL;
 import com.voidsow.myrpc.framework.core.serialize.SerializeFactory;
 import com.voidsow.myrpc.framework.core.spi.ServiceLoader;
@@ -25,4 +26,9 @@ public class ServerCache {
      * SPI
      */
     static public ServiceLoader SPI = new ServiceLoader();
+
+    /**
+     * 请求分发处理器
+     */
+    static public RequestDispatcher DISPATCHER;
 }

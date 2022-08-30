@@ -5,6 +5,7 @@ import com.voidsow.myrpc.framework.core.common.Encoder;
 import com.voidsow.myrpc.framework.core.common.Utils;
 import com.voidsow.myrpc.framework.core.common.config.ConfigLoader;
 import com.voidsow.myrpc.framework.core.common.config.ServerConfig;
+import com.voidsow.myrpc.framework.core.dispatcher.RequestDispatcher;
 import com.voidsow.myrpc.framework.core.example.EchoServiceImpl;
 import com.voidsow.myrpc.framework.core.registry.RegistryService;
 import com.voidsow.myrpc.framework.core.registry.URL;
@@ -41,6 +42,9 @@ public class Server {
         Class<?> serializerImplClazz = SPI.getService(SerializeFactory.class, config.getSerializer());
         SERIALIZE_FACTORY = (SerializeFactory) serializerImplClazz.getConstructor().newInstance();
         logger.info("environment:serializer={}", config.getSerializer());
+        DISPATCHER = new RequestDispatcher(config.getQueueSize(), config.getHandlerNum());
+        logger.info("environment:request queue size={}", config.getQueueSize());
+        logger.info("environment:request handler num={}", config.getHandlerNum());
     }
 
     public void start() throws InterruptedException {

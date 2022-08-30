@@ -14,6 +14,8 @@ public class ConfigLoader {
     public static final String PROXY_TYPE = "myrpc.proxy";
     public static final String ROUTER_TYPE = "myrpc.router.strategy";
     public static final String SERIALIZE_TYPE = "myrpc.serialize.type";
+    public static final String REQUEST_QUEUE_SZIE = "myrpc.server.queue.size";
+    public static final String REQUEST_HANDLER_NUM = "myrpc.server.handler.num";
 
 
     public static Properties loadConfiguration(String location) throws IOException {
@@ -31,7 +33,9 @@ public class ConfigLoader {
         return config.setApplication(properties.getProperty(APPLICATION_NAME)).
                 setPort(Integer.parseInt(properties.getProperty(SERVER_PORT))).
                 setRegistryAddr(properties.getProperty(REGISTER_ADDRESS))
-                .setSerializer(properties.getProperty(SERIALIZE_TYPE));
+                .setSerializer(properties.getProperty(SERIALIZE_TYPE))
+                .setQueueSize(Integer.parseInt(properties.getProperty(REQUEST_QUEUE_SZIE)))
+                .setHandlerNum(Integer.parseInt(properties.getProperty(REQUEST_HANDLER_NUM)));
     }
 
     public static ClientConfig getClientConfig(String location) throws IOException {
