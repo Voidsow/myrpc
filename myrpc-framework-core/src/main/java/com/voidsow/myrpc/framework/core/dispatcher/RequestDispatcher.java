@@ -55,10 +55,14 @@ public class RequestDispatcher {
                             Object result = null;
                             for (Method method : methods) {
                                 if (method.getName().equals(invocation.getMethod())) {
-                                    if (method.getReturnType().equals(Void.TYPE)) {
-                                        method.invoke(service, invocation.getParameters());
-                                    } else
-                                        result = method.invoke(service, invocation.getParameters());
+                                    try {
+                                        if (method.getReturnType().equals(Void.TYPE)) {
+                                            method.invoke(service, invocation.getParameters());
+                                        } else
+                                            result = method.invoke(service, invocation.getParameters());
+                                    } catch (InvocationTargetException e) {
+                                        invocation.setError(e.getCause());
+                                    }
                                     break;
                                 }
                             }
@@ -66,7 +70,7 @@ public class RequestDispatcher {
                             protocol.setContent(SERIALIZE_FACTORY.serialize(invocation));
                             protocol.setLength(protocol.getContent().length);
                             task.context.writeAndFlush(protocol);
-                        } catch (InvocationTargetException | IllegalAccessException e) {
+                        } catch (IllegalAccessException e) {
                             throw new RuntimeException(e);
                         }
                     });

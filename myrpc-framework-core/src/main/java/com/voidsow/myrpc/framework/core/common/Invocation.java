@@ -8,6 +8,7 @@ public class Invocation {
     private String id;
     private String method;
     private String service;
+    private Throwable error;
 
     @Override
     public String toString() {
@@ -70,5 +71,13 @@ public class Invocation {
 
     public void setAttachments(Map<String, Object> attachments) {
         this.attachments = attachments;
+    }
+
+    public Throwable getError() {
+        return error;
+    }
+
+    public void setError(Throwable error) {
+        this.error = error;
     }
 }
